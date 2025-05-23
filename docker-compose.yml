@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  cache:
+    image: redis:6
+    healthcheck:
+      test: ["CMD-SHELL", "[ $$(redis-cli ping) = 'PONG' ]"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 5s
+      start_period: 30s
+
+  directus:
+    image: directus/directus:latest
+    ports:
+      - 8055:8055
+    volumes:
+      - directus_uploads:/directus/uploads
+      - ./directus_extensions:/directus/extensions
+    depends_on:
+      cache:
+        condition: service_healthy
+    environment:
+      SECRET: ${DIRECTUS_SECRET}
+
+      DB_CLIENT: "pg"
+      DB_HOST: ${DATABASE_HOST}
+      DB_PORT: "5432"
+      DB_DATABASE: ${DATABASE_NAME}
+      DB_USER: "directus"
+      DB_PASSWORD: ${DATABASE_PASSWORD}
+
+      CACHE_ENABLED: "true"
+      CACHE_AUTO_PURGE: "true"
+      CACHE_STORE: "redis"
+      REDIS: "redis://cache:6379"
+
+      CONTENT_SECURITY_POLICY_DIRECTIVES__SCRIPT_SRC: "array:'self' data:"
+
+      WEBSOCKETS_ENABLED: true
+
+      # After first successful login, remove the admin email/password env. variables below
+      # as these will now be stored in the database.
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "admin"
+volumes:
+  directus_uploads:
+  directus_extensions:
+  directus_database:
