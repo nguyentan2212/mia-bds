@@ -34,5 +34,3 @@ services:
       ADMIN_PASSWORD: "admin"
 volumes:
   directus_uploads:
-  directus_extensions:
-  directus_database:
