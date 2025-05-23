@@ -18,6 +18,7 @@ services:
       DB_DATABASE: ${DATABASE_NAME}
       DB_USER: "directus"
       DB_PASSWORD: ${DATABASE_PASSWORD}
+      EXTENSIONS_AUTO_RELOAD: true
 
       CACHE_ENABLED: "true"
       CACHE_AUTO_PURGE: "true"
