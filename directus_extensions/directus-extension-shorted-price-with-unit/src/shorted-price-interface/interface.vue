@@ -18,45 +18,41 @@ const props = withDefaults(
 
 const emit = defineEmits(["input"]);
 
-const items = computed(() => props.choices || []);
+const items = computed(() =>
+  props.choices ? props.choices.sort((a, b) => b.value - a.value) : []
+);
 const currentValue = computed(() => Number(props.value));
-const currentPair = computed(() => {
+const currentUnit = computed(() => {
   if (items.value.length === 0) {
-    return {
-      unit: "1",
-      shortedPrice: currentValue.value,
-    };
+    console.log("You have no choices");
+    return "1";
   }
-  const item = items.value.find(
+  const unit = items.value.find(
     (item) => Number(item.value) <= currentValue.value
   );
-  return item
-    ? {
-        unit: item.value.toString(),
-        shortedPrice: currentValue.value / item.value,
-      }
-    : {
-        unit: "1",
-        shortedPrice: currentValue.value,
-      };
+  console.log(`unit: ${unit}`);
+  return unit ? unit.value.toString() : items.value[0]?.value.toString();
 });
 
-const unitValue = ref(currentPair.value.unit);
-const shortedPriceValue = ref(currentPair.value.shortedPrice);
+const currentShortedPrice = computed(() => {
+  return currentValue.value / Number(currentUnit.value ?? 1);
+});
+
+const unitValue = ref(currentUnit.value);
+const shortedPriceValue = ref(currentShortedPrice.value);
 
 const fullPriceValue = computed(() => {
   return Number(shortedPriceValue.value) * Number(unitValue.value);
 });
 
 watch(
-  () => currentPair.value,
+  () => props.value,
   (newValue) => {
-    unitValue.value = newValue.unit;
-    shortedPriceValue.value = newValue.shortedPrice;
+    unitValue.value = currentUnit.value;
+    shortedPriceValue.value = currentShortedPrice.value;
 
     console.log(`newValue: ${newValue}`);
     console.log(`items: `, items.value);
-    console.log(`currentPair: `, currentPair.value);
     console.log(`unitValue: ${unitValue.value}`);
     console.log(`shortedPriceValue: ${shortedPriceValue.value}`);
     console.log("--------------------------------");
