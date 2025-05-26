@@ -28,7 +28,8 @@ services:
       CONTENT_SECURITY_POLICY_DIRECTIVES__SCRIPT_SRC: "array:'self' data:"
 
       WEBSOCKETS_ENABLED: true
-
+      CORS_ENABLED: "true"
+      CORS_ORIGINS: "*"
       # After first successful login, remove the admin email/password env. variables below
       # as these will now be stored in the database.
       ADMIN_EMAIL: "admin@example.com"
