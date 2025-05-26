@@ -11,7 +11,6 @@ services:
       - ./directus_extensions:/directus/extensions
     environment:
       SECRET: ${DIRECTUS_SECRET}
-
       DB_CLIENT: "pg"
       DB_HOST: ${DATABASE_HOST}
       DB_PORT: "5432"
@@ -26,21 +25,24 @@ services:
       REDIS: ${REDIS}
 
       CONTENT_SECURITY_POLICY_DIRECTIVES__SCRIPT_SRC: "array:'self' data:"
-
       WEBSOCKETS_ENABLED: true
+
+      # CORS: Only allow your frontend(s) and allow credentials
       CORS_ENABLED: "true"
-      CORS_ORIGINS: "*"
-      # After first successful login, remove the admin email/password env. variables below
-      # as these will now be stored in the database.
+      CORS_ORIGIN: "http://127.0.0.1:3000,http://localhost:3000"
+      CORS_METHODS: "GET,POST,PATCH,PUT,DELETE,OPTIONS"
+      CORS_ALLOWED_HEADERS: "Content-Type,Authorization,X-Requested-With"
+      CORS_CREDENTIALS: "true"
+
       ADMIN_EMAIL: "admin@example.com"
       ADMIN_PASSWORD: "admin"
 
     labels:
       - traefik.http.middlewares.directus-cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS,PUT,PATCH,DELETE
-      - traefik.http.middlewares.directus-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.directus-cors.headers.accesscontrolalloworiginlist=http://127.0.0.1:3000,http://localhost:3000
       - traefik.http.middlewares.directus-cors.headers.accesscontrolallowheaders=Origin,Content-Type,Accept,Authorization
       - traefik.http.middlewares.directus-cors.headers.accesscontrolallowcredentials=true
-      - traefik.http.routers.example-demobds-8zsgkj-48-web.middlewares=directus-cors@docker
+      - traefik.http.routers.directus.middlewares=directus-cors@docker
 
 volumes:
   directus_uploads:
