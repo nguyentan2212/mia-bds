@@ -34,6 +34,14 @@ services:
       # as these will now be stored in the database.
       ADMIN_EMAIL: "admin@example.com"
       ADMIN_PASSWORD: "admin"
+
+    labels:
+      - traefik.http.middlewares.directus-cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS,PUT,PATCH,DELETE
+      - traefik.http.middlewares.directus-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.directus-cors.headers.accesscontrolallowheaders=Origin,Content-Type,Accept,Authorization
+      - traefik.http.middlewares.directus-cors.headers.accesscontrolallowcredentials=true
+      - traefik.http.routers.example-demobds-8zsgkj-48-web.middlewares=directus-cors@docker
+
 volumes:
   directus_uploads:
   directus_database:
